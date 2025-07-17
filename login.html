@@ -1,6 +1,4 @@
-<!-- login.html -->
-<!DOCTYPE html>
-<html lang="en">
+<!-- login.html --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,6 +89,14 @@
     .song-card .btn {
       margin-top: 10px;
     }
+    .register-link {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      color: #1DB954;
+      text-decoration: none;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -98,29 +104,26 @@
     <h2>Login</h2>
     <form id="loginForm">
       <label for="mobile">Mobile Number</label>
-      <input type="text" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10">
+      <input type="text" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10"><label for="password">Password</label>
+  <input type="password" id="password" name="password" required>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
-
-      <div class="captcha-box">
-        <div class="captcha-code" id="captchaCode"></div>
-        <button type="button" onclick="generateCaptcha()">↻</button>
-      </div>
-
-      <label for="captcha">Enter Captcha</label>
-      <input type="text" id="captcha" name="captcha" required>
-
-      <button type="submit" class="btn">Login</button>
-    </form>
+  <div class="captcha-box">
+    <div class="captcha-code" id="captchaCode"></div>
+    <button type="button" onclick="generateCaptcha()">↻</button>
   </div>
 
-  <div class="public-box">
+  <label for="captcha">Enter Captcha</label>
+  <input type="text" id="captcha" name="captcha" required>
+
+  <button type="submit" class="btn">Login</button>
+</form>
+
+<a class="register-link" href="registration.html">Don't have an account? Register here</a>
+
+  </div>  <div class="public-box">
     <h2>🎵 Public Songs</h2>
     <div id="publicSongs"></div>
-  </div>
-
-  <script>
+  </div>  <script>
     let currentCaptcha = "";
 
     function generateCaptcha() {
@@ -176,6 +179,5 @@
 
     generateCaptcha();
     renderPublicSongs();
-  </script>
-</body>
+  </script></body>
 </html>
