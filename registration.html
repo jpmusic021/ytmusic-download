@@ -1,0 +1,47 @@
+<!-- registration.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - JAYU STR</title>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; padding: 20px; }
+    .container { max-width: 400px; margin: 0 auto; padding: 20px; background: #1c1c1c; border-radius: 10px; }
+    h2 { color: #1DB954; text-align: center; }
+    label { display: block; margin-top: 15px; }
+    input { width: 100%; padding: 10px; margin-top: 5px; background: #2c2c2c; border: none; color: white; border-radius: 5px; }
+    .btn { margin-top: 20px; background: #1DB954; border: none; padding: 10px; width: 100%; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+    <form id="registerForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required>
+
+      <button type="submit" class="btn">Register</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+
+      // Store name/email locally (simulate sending to your server)
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userEmail", email);
+
+      // Redirect to index.html
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
