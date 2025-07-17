@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,13 +27,12 @@
       <span class="username">👑 JAYU STAR</span>
       <a href="login.html">Logout</a>
     </div>
-  </div>
-
-  <div class="container">
+  </div>  <div class="container">
     <div class="upload-section">
       <h2>Upload New Song</h2>
       <input type="text" id="songTitle" placeholder="Song Title">
       <input type="text" id="youtubeLink" placeholder="YouTube Link or ID">
+      <input type="text" id="driveLink" placeholder="Google Drive Link (optional)">
       <select id="songCategory">
         <option value="Chill">Chill</option>
         <option value="EDM">EDM</option>
@@ -43,13 +41,10 @@
         <option value="Timli">Mashup</option>
       </select>
       <button onclick="uploadSong()">Upload</button>
-    </div>
+    </div><h2>All Songs</h2>
+<div id="songsContainer"></div>
 
-    <h2>All Songs</h2>
-    <div id="songsContainer"></div>
-  </div>
-
-  <script>
+  </div>  <script>
     const songs = JSON.parse(localStorage.getItem("songs")) || [];
 
     function renderSongs() {
@@ -67,6 +62,7 @@
             <a href="https://v2.youconvert.net/enf/?url=https://www.youtube.com/watch?v=${extractYouTubeID(song.id)}" target="_blank">
               <button>Download MP3</button>
             </a>
+            ${song.driveLink ? `<a href="${song.driveLink}" target="_blank"><button>Google Drive</button></a>` : ""}
             <button onclick="editSong(${index})">Edit</button>
             <button onclick="deleteSong(${index})">Delete</button>
           </div>
@@ -86,6 +82,7 @@
     function uploadSong() {
       const title = document.getElementById("songTitle").value.trim();
       const id = document.getElementById("youtubeLink").value.trim();
+      const driveLink = document.getElementById("driveLink").value.trim();
       const category = document.getElementById("songCategory").value;
 
       if (!title || !id) {
@@ -93,12 +90,13 @@
         return;
       }
 
-      songs.push({ title, id, category });
+      songs.push({ title, id, category, driveLink });
       localStorage.setItem("songs", JSON.stringify(songs));
       renderSongs();
 
       document.getElementById("songTitle").value = "";
       document.getElementById("youtubeLink").value = "";
+      document.getElementById("driveLink").value = "";
     }
 
     function editSong(index) {
@@ -120,6 +118,5 @@
     }
 
     renderSongs();
-  </script>
-</body>
+  </script></body>
 </html>
