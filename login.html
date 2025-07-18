@@ -1,8 +1,14 @@
-<!-- login.html --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - JAYU STR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
   <style>
     body {
       background: #0f0f0f;
@@ -17,9 +23,9 @@
       gap: 30px;
       padding: 40px 20px;
     }
-    .container {
+    .container, .public-box {
       flex: 1 1 300px;
-      max-width: 400px;
+      max-width: 500px;
       background: #1c1c1c;
       border-radius: 10px;
       padding: 20px;
@@ -65,15 +71,13 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .public-box {
-      flex: 1 1 300px;
-      max-width: 500px;
-      background: #1a1a1a;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .public-box h2 {
+    .register-link {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
       color: #1DB954;
+      text-decoration: none;
+      font-weight: bold;
     }
     .song-card {
       background: #292929;
@@ -86,46 +90,55 @@
       height: 200px;
       border: none;
     }
-    .song-card .btn {
-      margin-top: 10px;
-    }
-    .register-link {
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      color: #1DB954;
-      text-decoration: none;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
+
+  <!-- Login Box -->
   <div class="container">
     <h2>Login</h2>
     <form id="loginForm">
       <label for="mobile">Mobile Number</label>
-      <input type="text" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10"><label for="password">Password</label>
-  <input type="password" id="password" name="password" required>
+      <input type="text" id="mobile" name="mobile" required pattern="[0-9]{10}" maxlength="10">
+      
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
 
-  <div class="captcha-box">
-    <div class="captcha-code" id="captchaCode"></div>
-    <button type="button" onclick="generateCaptcha()">↻</button>
+      <div class="captcha-box">
+        <div class="captcha-code" id="captchaCode"></div>
+        <button type="button" onclick="generateCaptcha()">↻</button>
+      </div>
+
+      <label for="captcha">Enter Captcha</label>
+      <input type="text" id="captcha" name="captcha" required>
+
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <a class="register-link" href="registration.html">Don't have an account? Register here</a>
   </div>
 
-  <label for="captcha">Enter Captcha</label>
-  <input type="text" id="captcha" name="captcha" required>
-
-  <button type="submit" class="btn">Login</button>
-</form>
-
-<a class="register-link" href="registration.html">Don't have an account? Register here</a>
-
-  </div>  <div class="public-box">
+  <!-- Public Songs Box -->
+  <div class="public-box">
     <h2>🎵 Public Songs</h2>
-    <div id="publicSongs"></div>
-  </div>  
+    <div id="publicSongs">Loading songs...</div>
+  </div>
+
   <script>
-    src="data.js"
+    // ✅ Replace with your Firebase project config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDemoKEYxxxREPLACE_ME",
+      authDomain: "your-project.firebaseapp.com",
+      databaseURL: "https://your-project.firebaseio.com",
+      projectId: "your-project",
+      storageBucket: "your-project.appspot.com",
+      messagingSenderId: "000000000000",
+      appId: "1:000000000000:web:abc123"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 🔐 Captcha
     let currentCaptcha = "";
 
     function generateCaptcha() {
@@ -147,39 +160,46 @@
         return;
       }
 
-      // TODO: Add real login logic
+      // 🧠 Basic Login Validation (temporary)
       alert("Login successful!");
       window.location.href = "profile.html";
     });
 
+    // 🎵 Public Songs Display from Firebase
     function extractYouTubeID(linkOrId) {
-      if (linkOrId.includes("youtube.com") || linkOrId.includes("youtu.be")) {
-        const match = linkOrId.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-        return match ? match[1] : linkOrId;
-      }
-      return linkOrId;
+      const match = linkOrId.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+      return match ? match[1] : linkOrId;
     }
 
     function renderPublicSongs() {
       const container = document.getElementById("publicSongs");
-      const songs = JSON.parse(localStorage.getItem("songs")) || [];
-      container.innerHTML = "";
-      songs.forEach(song => {
-        const card = document.createElement("div");
-        card.className = "song-card";
-        card.innerHTML = `
-          <h4>${song.title}</h4>
-          <p>Category: ${song.category}</p>
-          <iframe src="https://www.youtube.com/embed/${extractYouTubeID(song.id)}" allowfullscreen></iframe>
-          <a href="https://api.vevioz.com/@api/button/mp3/${extractYouTubeID(song.id)}" target="_blank">
-            <button class="btn">Download MP3</button>
-          </a>
-        `;
-        container.appendChild(card);
+      db.ref("songs").on("value", snapshot => {
+        container.innerHTML = "";
+        const songs = snapshot.val();
+        if (!songs) {
+          container.innerHTML = "<p>No songs available.</p>";
+          return;
+        }
+        for (let key in songs) {
+          const song = songs[key];
+          const videoId = extractYouTubeID(song.id);
+          const card = document.createElement("div");
+          card.className = "song-card";
+          card.innerHTML = `
+            <h4>${song.title}</h4>
+            <p>Category: ${song.category}</p>
+            <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
+            <a href="https://api.vevioz.com/@api/button/mp3/${videoId}" target="_blank">
+              <button class="btn">Download MP3</button>
+            </a>
+          `;
+          container.appendChild(card);
+        }
       });
     }
 
     generateCaptcha();
     renderPublicSongs();
-  </script></body>
+  </script>
+</body>
 </html>
