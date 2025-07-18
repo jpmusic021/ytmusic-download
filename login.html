@@ -46,19 +46,7 @@
       border: none;
       color: white;
       border-radius: 5px;
-    }
-    .captcha-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-    }
-    .captcha-code {
-      font-weight: bold;
-      padding: 10px;
-      background: #444;
-      border-radius: 5px;
-      letter-spacing: 3px;
+
     }
     .btn {
       margin-top: 20px;
@@ -104,13 +92,9 @@
       <label for="password">Password</label>
       <input type="password" id="password" name="password" required>
 
-      <div class="captcha-box">
-        <div class="captcha-code" id="captchaCode"></div>
-        <button type="button" onclick="generateCaptcha()">↻</button>
-      </div>
+  
 
-      <label for="captcha">Enter Captcha</label>
-      <input type="text" id="captcha" name="captcha" required>
+    
 
       <button type="submit" class="btn">Login</button>
     </form>
