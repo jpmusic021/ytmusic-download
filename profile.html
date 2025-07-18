@@ -44,7 +44,9 @@
     </div><h2>All Songs</h2>
 <div id="songsContainer"></div>
 
-  </div>  <script>
+  </div> 
+  <script>
+    <script src="data.js"></script>
     const songs = JSON.parse(localStorage.getItem("songs")) || [];
 
     function renderSongs() {
