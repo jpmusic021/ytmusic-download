@@ -1,117 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
   <title>Login - JAYU STR</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <style>
-    body {
-      background: #0f0f0f; color: white; font-family: Arial; padding: 20px;
-      display: flex; justify-content: center; flex-wrap: wrap; gap: 30px;
-    }
-    .container, .public-box {
-      background: #1c1c1c; padding: 20px; border-radius: 10px; max-width: 400px;
-    }
-    h2 { color: #1DB954; text-align: center; }
-    input, button {
-      width: 100%; padding: 10px; margin-top: 10px;
-      background: #2c2c2c; color: white; border: none; border-radius: 5px;
-    }
-    .song-card {
-      background: #292929; margin-bottom: 15px; padding: 10px; border-radius: 5px;
-    }
-    iframe { width: 100%; height: 200px; border: none; }
-    .btn { background: #1DB954; font-weight: bold; cursor: pointer; }
-    a { color: #1DB954; text-align: center; display: block; margin-top: 15px; }
+    body { background: #111; color: white; font-family: Arial; padding: 20px; }
+    .box { background: #1c1c1c; padding: 20px; max-width: 400px; margin: auto; border-radius: 10px; }
+    input { width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 5px; border: none; background: #333; color: white; }
+    button { background: #1DB954; padding: 10px; border: none; border-radius: 5px; width: 100%; color: white; font-weight: bold; }
+    a { color: #1DB954; text-decoration: none; display: block; text-align: center; margin-top: 15px; }
   </style>
 </head>
 <body>
-
-  <div class="container">
+  <div class="box">
     <h2>Login</h2>
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button class="btn" onclick="login()">Login</button>
-    <a href="registration.html">Don't have an account? Register here</a>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="loginUser()">Login</button>
+    <a href="registration.html">Don't have an account? Register</a>
   </div>
 
-  <div class="public-box">
-    <h2>🎵 Public Songs</h2>
-    <div id="publicSongs">Loading...</div>
-  </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr_hNAJ1VsC-n77tcwcc1L2gVhD_WJf7E",
+      authDomain: "ytmusicdownload-d7404.firebaseapp.com",
+      databaseURL: "https://ytmusicdownload-d7404-default-rtdb.firebaseio.com",
+      projectId: "ytmusicdownload-d7404",
+      storageBucket: "ytmusicdownload-d7404.appspot.com",
+      messagingSenderId: "854569253804",
+      appId: "1:854569253804:web:74031abd5082ccaca41809"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
- import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyA7uLvxSnVQ-YPmG6u89LLCp_hA23nnL94",
-    authDomain: "login-6b5cf.firebaseapp.com",
-    projectId: "login-6b5cf",
-    storageBucket: "login-6b5cf.firebasestorage.app",
-    messagingSenderId: "143599772060",
-    appId: "1:143599772060:web:da76381911a1a94be32859",
-    measurementId: "G-0PXXRGC2Q0"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-
-    function login() {
+    function loginUser() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      auth.signInWithEmailAndPassword(email, password)
+      firebase.auth().signInWithEmailAndPassword(email, password)
         .then(() => {
           alert("Login successful!");
-          window.location.href = "profile.html";
+          window.location.href = "profile.html"; // or index.html
         })
         .catch(error => {
           alert("Login failed: " + error.message);
         });
     }
-
-    function extractID(linkOrId) {
-      const match = linkOrId.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-      return match ? match[1] : linkOrId;
-    }
-
-    function loadPublicSongs() {
-      const container = document.getElementById("publicSongs");
-      db.ref("songs").once("value", snapshot => {
-        const songs = snapshot.val();
-        container.innerHTML = "";
-        if (songs) {
-          Object.values(songs).forEach(song => {
-            const vid = extractID(song.id);
-            const div = document.createElement("div");
-            div.className = "song-card";
-            div.innerHTML = `
-              <h4>${song.title}</h4>
-              <p>Category: ${song.category}</p>
-              <iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen></iframe>
-              <a href="https://api.vevioz.com/@api/button/mp3/${vid}" target="_blank">
-                <button class="btn">Download MP3</button>
-              </a>
-            `;
-            container.appendChild(div);
-          });
-        } else {
-          container.innerText = "No songs found.";
-        }
-      });
-    }
-
-    loadPublicSongs();
   </script>
 </body>
 </html>
