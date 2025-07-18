@@ -1,43 +1,45 @@
-<!-- profile.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile - JAYU STR</title>
   <style>
-    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; padding: 20px; }
-    .container { max-width: 500px; margin: 0 auto; padding: 20px; background: #1c1c1c; border-radius: 10px; }
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; padding: 20px; margin: 0; }
+    header { display: flex; justify-content: space-between; align-items: center; background: #1DB954; color: white; padding: 10px 20px; }
+    .logo { font-weight: bold; font-size: 20px; }
+    .menu a { color: white; margin-left: 15px; text-decoration: none; font-weight: bold; }
+    .container { max-width: 500px; margin: 0 auto; padding: 20px; background: #1c1c1c; border-radius: 10px; margin-top: 20px; }
     h2 { color: #1DB954; text-align: center; }
-    .info { margin-top: 20px; }
-    .info label { font-weight: bold; color: #1DB954; }
-    .info p { margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px; }
-    .logout { margin-top: 30px; background: #ff4444; padding: 10px; width: 100%; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
-    .upload-section { margin-top: 30px; }
+    label { font-weight: bold; color: #1DB954; }
     input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: none; }
-    button.upload-btn { background: #1DB954; color: white; font-weight: bold; cursor: pointer; }
-    .song-list { margin-top: 40px; }
+    .upload-btn { background: #1DB954; color: white; font-weight: bold; cursor: pointer; }
+    .logout { margin-top: 20px; background: #ff4444; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+    .song-list { margin-top: 30px; }
     .song-item { padding: 10px; background: #2a2a2a; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .song-title { color: white; }
     .delete-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
   </style>
 </head>
 <body>
+  <header>
+    <div class="logo">🎵 JAYU STR</div>
+    <div class="menu">
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="#">Categories</a>
+    </div>
+  </header>
+
   <div class="container">
     <h2>Welcome, <span id="username">Guest</span></h2>
-    <div class="info">
-      <label>Mobile Number:</label>
-      <p id="userMobile">Not logged in</p>
-
-      <label>Account Type:</label>
-      <p>Standard User</p>
-    </div>
+    <p><label>Mobile:</label> <span id="userMobile">---</span></p>
+    <p><label>Email:</label> <span id="userEmail">---</span></p>
 
     <div class="upload-section">
       <h3 style="color:#1DB954">🎵 Upload a New Song</h3>
-      <input type="text" id="songTitle" placeholder="Song Title">
-      <input type="text" id="youtubeId" placeholder="YouTube Video ID">
-      <input type="text" id="driveLink" placeholder="Google Drive MP3 Link">
+      <input type="text" id="songTitle" placeholder="Song Title" />
+      <input type="text" id="youtubeId" placeholder="YouTube Video ID" />
+      <input type="text" id="driveLink" placeholder="Google Drive MP3 Link" />
       <select id="songCategory">
         <option value="Timli">Timli</option>
         <option value="EDM">EDM</option>
@@ -45,7 +47,7 @@
         <option value="Mashup">Mashup</option>
         <option value="Hindi">Hindi</option>
       </select>
-      <button class="upload-btn" onclick="uploadSong()">Upload Song</button>
+      <button class="upload-btn" onclick="uploadSong()">Upload</button>
     </div>
 
     <div class="song-list">
@@ -56,17 +58,32 @@
     <button class="logout" onclick="logoutUser()">Logout</button>
   </div>
 
-  <script>
-    const user = JSON.parse(localStorage.getItem("user"));
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAr_hNAJ1VsC-n77tcwcc1L2gVhD_WJf7E",
+      authDomain: "ytmusicdownload-d7404.firebaseapp.com",
+      projectId: "ytmusicdownload-d7404",
+      databaseURL: "https://ytmusicdownload-d7404-default-rtdb.firebaseio.com",
+      storageBucket: "ytmusicdownload-d7404.appspot.com",
+      messagingSenderId: "854569253804",
+      appId: "1:854569253804:web:74031abd5082ccaca41809",
+      measurementId: "G-KTBN19GM4E"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       document.getElementById("username").innerText = user.name || "User";
-      document.getElementById("userMobile").innerText = user.mobile || "Unknown";
-    }
-
-    function logoutUser() {
-      localStorage.removeItem("user");
-      alert("Logged out successfully!");
+      document.getElementById("userMobile").innerText = user.mobile || "-";
+      document.getElementById("userEmail").innerText = user.email || "-";
+    } else {
+      alert("Please login first.");
       window.location.href = "login.html";
     }
 
@@ -76,63 +93,58 @@
       const driveLink = document.getElementById("driveLink").value.trim();
       const category = document.getElementById("songCategory").value;
 
-      if (!title || !youtubeId) {
-        alert("Please enter title and YouTube video ID.");
+      if (!title || !youtubeId || !driveLink) {
+        alert("Please fill all fields.");
         return;
       }
 
-      const newSong = { id: youtubeId, title, category, driveLink, uploadedBy: user?.mobile || "guest" };
-      let songs = [];
+      const songData = {
+        title,
+        id: youtubeId,
+        driveLink,
+        category,
+        uploadedBy: user.mobile || "guest"
+      };
 
-      // Use Firebase instead of localStorage
-      fetch("https://your-firebase-project.firebaseio.com/songs.json")
-        .then(res => res.json())
-        .then(data => {
-          if (data) {
-            songs = Object.values(data);
-          }
-          songs.push(newSong);
-          fetch("https://your-firebase-project.firebaseio.com/songs.json", {
-            method: "POST",
-            body: JSON.stringify(newSong)
-          }).then(() => {
-            alert("Song uploaded successfully!");
-            displayUserSongs();
-          });
-        });
-    }
-
-    function displayUserSongs() {
-      fetch("https://your-firebase-project.firebaseio.com/songs.json")
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("userSongs");
-          container.innerHTML = "";
-          if (!data) return;
-
-          const userSongs = Object.entries(data).filter(([id, song]) => song.uploadedBy === (user?.mobile || "guest"));
-
-          userSongs.forEach(([key, song]) => {
-            const div = document.createElement("div");
-            div.className = "song-item";
-            div.innerHTML = `
-              <span class="song-title">${song.title} (${song.category})</span>
-              <button class="delete-btn" onclick="deleteSong('${key}')">Delete</button>
-            `;
-            container.appendChild(div);
-          });
-        });
-    }
-
-    function deleteSong(key) {
-      fetch(`https://your-firebase-project.firebaseio.com/songs/${key}.json`, {
-        method: "DELETE"
-      }).then(() => {
+      db.ref("songs").push(songData).then(() => {
+        alert("Song uploaded!");
         displayUserSongs();
       });
     }
 
-    // Load songs when page loads
+    function displayUserSongs() {
+      const songList = document.getElementById("userSongs");
+      songList.innerHTML = "";
+
+      db.ref("songs").once("value", (snapshot) => {
+        const songs = snapshot.val();
+        for (let key in songs) {
+          const song = songs[key];
+          if (song.uploadedBy === (user.mobile || "guest")) {
+            const div = document.createElement("div");
+            div.className = "song-item";
+            div.innerHTML = `
+              <span>${song.title} (${song.category})</span>
+              <button class="delete-btn" onclick="deleteSong('${key}')">Delete</button>
+            `;
+            songList.appendChild(div);
+          }
+        }
+      });
+    }
+
+    function deleteSong(key) {
+      db.ref("songs/" + key).remove().then(() => {
+        displayUserSongs();
+      });
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    // Auto load songs
     displayUserSongs();
   </script>
 </body>
